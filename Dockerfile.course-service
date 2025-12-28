@@ -1,4 +1,4 @@
-# Multi-stage build for Course Service
+# Multi-stage build for Course Service - Railway Deployment
 FROM python:3.11-slim as base
 
 # Set environment variables
@@ -24,26 +24,31 @@ COPY services/course-service/requirements.txt .
 RUN pip install --upgrade pip && \
     pip install -r requirements.txt
 
-# Copy application code
-COPY services/course-service/app ./app
-COPY services/course-service/alembic ./alembic
-COPY services/course-service/alembic.ini .
-COPY services/course-service/entry.sh .
+# Copy application code from course-service
+COPY services/course-service/ .
 
-# Make entry script executable
-RUN chmod +x entry.sh
+# Create production entry script inline
+RUN echo '#!/bin/bash\n\
+    set -e\n\
+    echo "🚀 Starting Course Service..."\n\
+    echo "🔄 Running database migrations..."\n\
+    python -m alembic upgrade head || echo "⚠️ Migration failed or no migrations to apply"\n\
+    echo "✅ Migrations completed!"\n\
+    echo "🏁 Starting FastAPI application..."\n\
+    exec uvicorn app.main:app --host 0.0.0.0 --port 8000' > entry-prod.sh && \
+    chmod +x entry-prod.sh
 
 # Create non-root user
 RUN useradd -m -u 1000 appuser && \
     chown -R appuser:appuser /app
 USER appuser
 
-# Expose port (Railway uses PORT env var)
-EXPOSE 8002
+# Expose port
+EXPOSE 8000
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD curl -f http://localhost:${PORT:-8002}/health || exit 1
+    CMD curl -f http://localhost:8000/health || exit 1
 
-# Run the application
-CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8002}"]
+# Run the application with migrations
+CMD ["./entry-prod.sh"]

@@ -60,9 +60,9 @@ jobs:
       postgres:
         image: postgres:15-alpine
         env:
-          POSTGRES_USER: test_user
-          POSTGRES_PASSWORD: test_password
-          POSTGRES_DB: test_db
+          POSTGRES_USER: mlh_user
+          POSTGRES_PASSWORD: mlh_secure_password
+          POSTGRES_DB: mlh_db
         ports:
           - 5432:5432
         options: >-
@@ -99,7 +99,7 @@ jobs:
     - name: Run tests
       working-directory: ./services/user-service
       env:
-        DATABASE_URL: postgresql+asyncpg://test_user:test_password@localhost:5432/test_db
+        DATABASE_URL: postgresql+asyncpg://mlh_user:mlh_secure_password@localhost:5432/mlh_db
         REDIS_URL: redis://localhost:6379/0
         JWT_SECRET_KEY: test-secret-key-for-ci-pipeline-only
         JWT_ALGORITHM: HS256

@@ -8,7 +8,11 @@ echo "🚀 Starting User Service..."
 
 # Wait for PostgreSQL
 echo "⏳ Waiting for PostgreSQL..."
-while ! pg_isready -h postgres -U mlh_user -d mlh_db; do
+export POSTGRES_USER=${POSTGRES_USER:-mlh_user}
+export POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-mlh_secure_password}
+export POSTGRES_DB=${POSTGRES_DB:-mlh_db}
+
+while ! pg_isready -h postgres -U "$POSTGRES_USER" -d "$POSTGRES_DB"; do
   echo "PostgreSQL is unavailable - sleeping"
   sleep 2
 done
@@ -16,15 +20,15 @@ echo "✅ PostgreSQL is ready!"
 
 # Create database if it doesn't exist
 echo "🔧 Ensuring database exists..."
-PGPASSWORD=mlh_secure_password psql -h postgres -U mlh_user -d mlh_db -c "CREATE DATABASE user_db;" 2>/dev/null || echo "Database user_db already exists or creation failed"
-PGPASSWORD=mlh_secure_password psql -h postgres -U mlh_user -d user_db -c "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";" 2>/dev/null || echo "UUID extension already exists"
-PGPASSWORD=mlh_secure_password psql -h postgres -U mlh_user -d user_db -c "CREATE EXTENSION IF NOT EXISTS \"pg_trgm\";" 2>/dev/null || echo "pg_trgm extension already exists"
+PGPASSWORD="$POSTGRES_PASSWORD" psql -h postgres -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "CREATE DATABASE user_db;" 2>/dev/null || echo "Database user_db already exists or creation failed"
+PGPASSWORD="$POSTGRES_PASSWORD" psql -h postgres -U "$POSTGRES_USER" -d user_db -c "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";" 2>/dev/null || echo "UUID extension already exists"
+PGPASSWORD="$POSTGRES_PASSWORD" psql -h postgres -U "$POSTGRES_USER" -d user_db -c "CREATE EXTENSION IF NOT EXISTS \"pg_trgm\";" 2>/dev/null || echo "pg_trgm extension already exists"
 
 # Wait for Redis
 echo "⏳ Waiting for Redis..."
 # Extract password from REDIS_URL or use default
 REDIS_PASS=$(echo "$REDIS_URL" | sed -n 's/.*:\/\/:\([^@]*\)@.*/\1/p')
-REDIS_PASS=${REDIS_PASS:-mlh_redis_password}
+REDIS_PASS=${REDIS_PASS:-${REDIS_PASSWORD:-mlh_redis_password}}
 while ! redis-cli -h redis -a "$REDIS_PASS" ping 2>/dev/null | grep -q PONG; do
   echo "Redis is unavailable - sleeping"
   sleep 2

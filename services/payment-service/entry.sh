@@ -8,7 +8,11 @@ echo "🚀 Starting Payment Service..."
 
 # Wait for PostgreSQL
 echo "⏳ Waiting for PostgreSQL..."
-while ! pg_isready -h postgres -U mlh_user -d mlh_db; do
+export POSTGRES_USER=${POSTGRES_USER:-mlh_user}
+export POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-mlh_secure_password}
+export POSTGRES_DB=${POSTGRES_DB:-mlh_db}
+
+while ! pg_isready -h postgres -U "$POSTGRES_USER" -d "$POSTGRES_DB"; do
   echo "PostgreSQL is unavailable - sleeping"
   sleep 2
 done
@@ -16,8 +20,8 @@ echo "✅ PostgreSQL is ready!"
 
 # Create database if it doesn't exist
 echo "🔧 Ensuring database exists..."
-PGPASSWORD=mlh_secure_password psql -h postgres -U mlh_user -d mlh_db -c "CREATE DATABASE payment_db;" 2>/dev/null || echo "Database payment_db already exists or creation failed"
-PGPASSWORD=mlh_secure_password psql -h postgres -U mlh_user -d payment_db -c "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";" 2>/dev/null || echo "UUID extension already exists"
+PGPASSWORD="$POSTGRES_PASSWORD" psql -h postgres -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "CREATE DATABASE payment_db;" 2>/dev/null || echo "Database payment_db already exists or creation failed"
+PGPASSWORD="$POSTGRES_PASSWORD" psql -h postgres -U "$POSTGRES_USER" -d payment_db -c "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";" 2>/dev/null || echo "UUID extension already exists"
 
 # Run database migrations
 echo "🔄 Running database migrations..."

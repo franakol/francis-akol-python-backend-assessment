@@ -4,7 +4,7 @@ import math
 from datetime import datetime
 from typing import Optional
 
-from app.models.enrollment import Enrollment, EnrollmentStatus
+from app.models.enrollment import EnrollmentStatus
 from app.repositories.enrollment_repository import EnrollmentRepository
 from app.schemas.enrollment import (
     EnrollmentCreate,
@@ -13,7 +13,10 @@ from app.schemas.enrollment import (
     EnrollmentUpdate,
     PaginatedEnrollmentResponse,
 )
-from app.tasks.enrollment_tasks import process_enrollment, update_enrollment_progress
+from app.tasks.enrollment_tasks import (
+    process_enrollment,
+    update_enrollment_progress,
+)
 from fastapi import HTTPException, status
 
 
@@ -41,8 +44,10 @@ class EnrollmentService:
             HTTPException: If already enrolled
         """
         # Check if user is already enrolled in this course
-        existing = await self.enrollment_repository.get_user_enrollment_for_course(
-            user_id, enrollment_data.course_id
+        existing = (
+            await self.enrollment_repository.get_user_enrollment_for_course(
+                user_id, enrollment_data.course_id
+            )
         )
 
         if existing and existing.status in [
@@ -122,7 +127,10 @@ class EnrollmentService:
         )
 
     async def update_enrollment(
-        self, enrollment_id: int, enrollment_data: EnrollmentUpdate, user_id: int
+        self,
+        enrollment_id: int,
+        enrollment_data: EnrollmentUpdate,
+        user_id: int,
     ) -> EnrollmentResponse:
         """Update enrollment."""
         enrollment = await self.enrollment_repository.get_enrollment_by_id(
@@ -150,7 +158,9 @@ class EnrollmentService:
                 enrollment.completed_at = datetime.utcnow()
             setattr(enrollment, key, value)
 
-        enrollment = await self.enrollment_repository.update_enrollment(enrollment)
+        enrollment = await self.enrollment_repository.update_enrollment(
+            enrollment
+        )
 
         # If progress updated, trigger async task
         if "progress_percentage" in update_dict:
@@ -160,7 +170,9 @@ class EnrollmentService:
 
         return EnrollmentResponse.model_validate(enrollment)
 
-    async def cancel_enrollment(self, enrollment_id: int, user_id: int) -> None:
+    async def cancel_enrollment(
+        self, enrollment_id: int, user_id: int
+    ) -> None:
         """Cancel enrollment."""
         enrollment = await self.enrollment_repository.get_enrollment_by_id(
             enrollment_id
@@ -226,7 +238,9 @@ class EnrollmentService:
             total_pages=total_pages,
         )
 
-    async def get_enrollment_stats(self, user_id: int) -> EnrollmentStatsResponse:
+    async def get_enrollment_stats(
+        self, user_id: int
+    ) -> EnrollmentStatsResponse:
         """Get enrollment statistics for a user."""
         stats = await self.enrollment_repository.get_enrollment_stats(user_id)
         return EnrollmentStatsResponse(**stats)

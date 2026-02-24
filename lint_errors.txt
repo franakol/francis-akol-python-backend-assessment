@@ -1,0 +1,33 @@
+services/course-service/alembic/versions/20241021_1700-001_initial_course_schema.py:11:1: F401 'sqlalchemy.dialects.postgresql' imported but unused
+services/course-service/alembic/versions/20241021_1700-001_initial_course_schema.py:132:53: W291 trailing whitespace
+services/course-service/app/api/v1/endpoints/files.py:6:1: F401 'fastapi.Depends' imported but unused
+services/course-service/app/api/v1/endpoints/files.py:6:1: F401 'fastapi.HTTPException' imported but unused
+services/course-service/app/core/middleware.py:14:1: F401 'app.core.logging.get_correlation_id' imported but unused
+services/course-service/app/main.py:92:1: E402 module level import not at top of file
+services/course-service/app/services/course_service.py:4:1: F401 'typing.List' imported but unused
+services/course-service/app/services/course_service.py:7:1: F401 'app.models.course.Course' imported but unused
+services/course-service/app/services/file_storage.py:6:1: F401 'datetime.timedelta' imported but unused
+services/course-service/tests/conftest.py:5:1: F401 'unittest.mock.AsyncMock' imported but unused
+services/course-service/tests/conftest.py:5:1: F401 'unittest.mock.MagicMock' imported but unused
+services/enrollment-service/alembic/versions/20241021_1730-001_initial_enrollment_schema.py:23:128: E501 line too long (158 > 127 characters)
+services/enrollment-service/app/core/middleware.py:14:1: F401 'app.core.logging.get_correlation_id' imported but unused
+services/enrollment-service/app/models/enrollment.py:7:1: F401 'sqlalchemy.ForeignKey' imported but unused
+services/enrollment-service/app/models/enrollment.py:7:1: F401 'sqlalchemy.String' imported but unused
+services/enrollment-service/app/services/enrollment_service.py:7:1: F401 'app.models.enrollment.Enrollment' imported but unused
+services/payment-service/alembic/versions/20241022_0100-001_initial_payment_schema.py:23:128: E501 line too long (154 > 127 characters)
+services/payment-service/alembic/versions/20241022_0100-001_initial_payment_schema.py:28:128: E501 line too long (174 > 127 characters)
+services/payment-service/app/core/middleware.py:14:1: F401 'app.core.logging.get_correlation_id' imported but unused
+services/payment-service/app/models/payment.py:93:128: E501 line too long (137 > 127 characters)
+services/payment-service/app/services/payment_service.py:99:9: F841 local variable 'e' is assigned to but never used
+services/payment-service/app/services/payment_service.py:326:13: F841 local variable 'refund_result' is assigned to but never used
+services/user-service/app/core/config.py:4:1: F401 'typing.Union' imported but unused
+services/user-service/app/core/config.py:6:1: F401 'pydantic.model_validator' imported but unused
+services/user-service/app/core/logging.py:48:128: E501 line too long (185 > 127 characters)
+services/user-service/app/main.py:90:1: E402 module level import not at top of file
+services/user-service/app/models/user.py:4:1: F401 'datetime.datetime' imported but unused
+services/user-service/app/services/auth_service.py:3:1: F401 'datetime.datetime' imported but unused
+services/user-service/app/services/auth_service.py:3:1: F401 'datetime.timedelta' imported but unused
+services/user-service/app/services/auth_service.py:4:1: F401 'typing.Dict' imported but unused
+services/user-service/app/services/auth_service.py:4:1: F401 'typing.Optional' imported but unused
+services/user-service/app/services/user_service.py:6:1: F401 'app.core.security.hash_password' imported but unused
+services/user-service/app/services/user_service.py:7:1: F401 'app.models.user.User' imported but unused

@@ -76,7 +76,9 @@ class PaymentGateway:
                 "id": intent_id,
                 "status": "succeeded",
                 "transaction_id": transaction_id,
-                "charges": {"data": [{"id": transaction_id, "status": "succeeded"}]},
+                "charges": {
+                    "data": [{"id": transaction_id, "status": "succeeded"}]
+                },
             }
         else:
             return {
@@ -85,7 +87,9 @@ class PaymentGateway:
                 "failure_message": "Card declined - insufficient funds",
             }
 
-    async def refund_payment(self, transaction_id: str, reason: str = None) -> Dict:
+    async def refund_payment(
+        self, transaction_id: str, reason: str = None
+    ) -> Dict:
         """
         Refund a payment.
 

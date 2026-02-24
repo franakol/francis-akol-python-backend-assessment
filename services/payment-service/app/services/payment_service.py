@@ -78,7 +78,8 @@ class PaymentService:
 
                 if response.status_code == 404:
                     raise HTTPException(
-                        status_code=status.HTTP_404_NOT_FOUND, detail="Course not found"
+                        status_code=status.HTTP_404_NOT_FOUND,
+                        detail="Course not found",
                     )
 
                 if response.status_code != 200:
@@ -96,15 +97,17 @@ class PaymentService:
                         detail="Course is free, no payment required",
                     )
 
-        except httpx.RequestError as e:
+        except httpx.RequestError:
             raise HTTPException(
                 status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
                 detail="Course service unavailable",
             )
 
         # Check if user already paid for this course
-        existing_payment = await self.payment_repository.get_user_payment_for_course(
-            user_id, payment_data.course_id
+        existing_payment = (
+            await self.payment_repository.get_user_payment_for_course(
+                user_id, payment_data.course_id
+            )
         )
 
         if existing_payment:
@@ -173,7 +176,8 @@ class PaymentService:
 
         if not payment:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Payment not found"
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Payment not found",
             )
 
         if payment.user_id != user_id:
@@ -190,19 +194,23 @@ class PaymentService:
 
         # Confirm with payment gateway
         try:
-            result = await payment_gateway.confirm_payment_intent(payment_intent_id)
+            result = await payment_gateway.confirm_payment_intent(
+                payment_intent_id
+            )
 
             if result["status"] == "succeeded":
                 payment.status = PaymentStatus.COMPLETED
-                payment.transaction_id = result.get("transaction_id") or result.get(
-                    "charges", {}
-                ).get("data", [{}])[0].get("id")
+                payment.transaction_id = result.get(
+                    "transaction_id"
+                ) or result.get("charges", {}).get("data", [{}])[0].get("id")
 
                 # Create enrollment after successful payment
                 await self._create_enrollment_for_payment(payment)
             else:
                 payment.status = PaymentStatus.FAILED
-                payment.failure_reason = result.get("failure_message", "Payment failed")
+                payment.failure_reason = result.get(
+                    "failure_message", "Payment failed"
+                )
 
         except Exception as e:
             payment.status = PaymentStatus.FAILED
@@ -233,13 +241,16 @@ class PaymentService:
             # Enrollment can be created manually if needed
             pass
 
-    async def get_payment_by_id(self, payment_id: int, user_id: int) -> PaymentResponse:
+    async def get_payment_by_id(
+        self, payment_id: int, user_id: int
+    ) -> PaymentResponse:
         """Get payment by ID."""
         payment = await self.payment_repository.get_payment_by_id(payment_id)
 
         if not payment:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Payment not found"
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Payment not found",
             )
 
         # Check if user owns this payment
@@ -312,7 +323,8 @@ class PaymentService:
 
         if not payment:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Payment not found"
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Payment not found",
             )
 
         if payment.status != PaymentStatus.COMPLETED:
@@ -323,7 +335,7 @@ class PaymentService:
 
         # Process refund via gateway
         try:
-            refund_result = await payment_gateway.refund_payment(
+            await payment_gateway.refund_payment(
                 payment.transaction_id, reason
             )
 

@@ -40,7 +40,9 @@ async def create_enrollment(
     """
     enrollment_repository = EnrollmentRepository(db)
     enrollment_service = EnrollmentService(enrollment_repository)
-    return await enrollment_service.create_enrollment(enrollment_data, x_user_id)
+    return await enrollment_service.create_enrollment(
+        enrollment_data, x_user_id
+    )
 
 
 @router.get("/", response_model=PaginatedEnrollmentResponse)
@@ -95,7 +97,9 @@ async def get_enrollment(
     """
     enrollment_repository = EnrollmentRepository(db)
     enrollment_service = EnrollmentService(enrollment_repository)
-    return await enrollment_service.get_enrollment_by_id(enrollment_id, x_user_id)
+    return await enrollment_service.get_enrollment_by_id(
+        enrollment_id, x_user_id
+    )
 
 
 @router.put("/{enrollment_id}", response_model=EnrollmentResponse)
@@ -133,18 +137,23 @@ async def cancel_enrollment(
     enrollment_repository = EnrollmentRepository(db)
     enrollment_service = EnrollmentService(enrollment_repository)
     await enrollment_service.cancel_enrollment(enrollment_id, x_user_id)
-    return MessageResponse(message=f"Enrollment {enrollment_id} cancelled successfully")
+    return MessageResponse(
+        message=f"Enrollment {enrollment_id} cancelled successfully"
+    )
 
 
 @router.get(
-    "/courses/{course_id}/enrollments", response_model=PaginatedEnrollmentResponse
+    "/courses/{course_id}/enrollments",
+    response_model=PaginatedEnrollmentResponse,
 )
 async def get_course_enrollments(
     course_id: int,
     page: int = Query(1, ge=1),
     page_size: int = Query(10, ge=1, le=100),
     status_filter: Optional[EnrollmentStatus] = Query(None),
-    x_user_id: int = Header(..., description="Instructor ID from auth service"),
+    x_user_id: int = Header(
+        ..., description="Instructor ID from auth service"
+    ),
     db: AsyncSession = Depends(get_db),
 ):
     """

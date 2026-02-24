@@ -24,7 +24,10 @@ class UserRepository:
     ) -> User:
         """Create a new user."""
         user = User(
-            email=email, username=username, hashed_password=hashed_password, role=role
+            email=email,
+            username=username,
+            hashed_password=hashed_password,
+            role=role,
         )
         self.db.add(user)
         await self.db.commit()
@@ -34,14 +37,18 @@ class UserRepository:
     async def get_user_by_id(self, user_id: int) -> Optional[User]:
         """Get user by ID with profile."""
         result = await self.db.execute(
-            select(User).options(selectinload(User.profile)).where(User.id == user_id)
+            select(User)
+            .options(selectinload(User.profile))
+            .where(User.id == user_id)
         )
         return result.scalar_one_or_none()
 
     async def get_user_by_email(self, email: str) -> Optional[User]:
         """Get user by email with profile."""
         result = await self.db.execute(
-            select(User).options(selectinload(User.profile)).where(User.email == email)
+            select(User)
+            .options(selectinload(User.profile))
+            .where(User.email == email)
         )
         return result.scalar_one_or_none()
 
@@ -59,7 +66,9 @@ class UserRepository:
     ) -> Optional[User]:
         """Get user by email or username."""
         result = await self.db.execute(
-            select(User).where(or_(User.email == email, User.username == username))
+            select(User).where(
+                or_(User.email == email, User.username == username)
+            )
         )
         return result.scalar_one_or_none()
 
@@ -68,7 +77,10 @@ class UserRepository:
     ) -> list[User]:
         """Get list of users with pagination and optional role filter."""
         query = (
-            select(User).options(selectinload(User.profile)).offset(skip).limit(limit)
+            select(User)
+            .options(selectinload(User.profile))
+            .offset(skip)
+            .limit(limit)
         )
 
         if role:

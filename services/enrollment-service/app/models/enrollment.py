@@ -4,7 +4,7 @@ import enum
 from datetime import datetime
 from typing import Optional
 
-from sqlalchemy import DateTime, Enum, ForeignKey, Integer, String
+from sqlalchemy import DateTime, Enum, Integer
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql import func
 
@@ -71,4 +71,7 @@ class Enrollment(Base, TimestampMixin):
     )
 
     def __repr__(self) -> str:
-        return f"<Enrollment(id={self.id}, user_id={self.user_id}, course_id={self.course_id}, status={self.status})>"
+        return (
+            f"<Enrollment(id={self.id}, user_id={self.user_id}, "
+            f"course_id={self.course_id}, status={self.status})>"
+        )

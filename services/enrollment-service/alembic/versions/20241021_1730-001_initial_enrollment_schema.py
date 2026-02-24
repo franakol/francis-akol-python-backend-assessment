@@ -20,7 +20,10 @@ depends_on = None
 def upgrade() -> None:
     # Create enrollmentstatus enum (if not exists)
     op.execute(
-        "DO $$ BEGIN CREATE TYPE enrollmentstatus AS ENUM ('pending', 'active', 'completed', 'cancelled'); EXCEPTION WHEN duplicate_object THEN null; END $$;"
+        "DO $$ BEGIN "
+        "CREATE TYPE enrollmentstatus AS ENUM "
+        "('pending', 'active', 'completed', 'cancelled'); "
+        "EXCEPTION WHEN duplicate_object THEN null; END $$;"
     )
 
     # Create enrollments table
@@ -50,9 +53,14 @@ def upgrade() -> None:
         ),
         sa.Column("completed_at", sa.DateTime(timezone=True), nullable=True),
         sa.Column(
-            "progress_percentage", sa.Integer(), nullable=False, server_default="0"
+            "progress_percentage",
+            sa.Integer(),
+            nullable=False,
+            server_default="0",
         ),
-        sa.Column("last_accessed_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column(
+            "last_accessed_at", sa.DateTime(timezone=True), nullable=True
+        ),
         sa.Column(
             "created_at",
             sa.DateTime(timezone=True),
@@ -69,12 +77,20 @@ def upgrade() -> None:
     )
 
     # Create indexes
-    op.create_index(op.f("ix_enrollments_id"), "enrollments", ["id"], unique=False)
     op.create_index(
-        op.f("ix_enrollments_user_id"), "enrollments", ["user_id"], unique=False
+        op.f("ix_enrollments_id"), "enrollments", ["id"], unique=False
     )
     op.create_index(
-        op.f("ix_enrollments_course_id"), "enrollments", ["course_id"], unique=False
+        op.f("ix_enrollments_user_id"),
+        "enrollments",
+        ["user_id"],
+        unique=False,
+    )
+    op.create_index(
+        op.f("ix_enrollments_course_id"),
+        "enrollments",
+        ["course_id"],
+        unique=False,
     )
     op.create_index(
         op.f("ix_enrollments_status"), "enrollments", ["status"], unique=False
@@ -111,11 +127,15 @@ def upgrade() -> None:
 
 def downgrade() -> None:
     # Drop triggers
-    op.execute("DROP TRIGGER IF EXISTS update_enrollments_updated_at ON enrollments;")
+    op.execute(
+        "DROP TRIGGER IF EXISTS update_enrollments_updated_at ON enrollments;"
+    )
     op.execute("DROP FUNCTION IF EXISTS update_updated_at_column();")
 
     # Drop indexes
-    op.drop_index("ix_enrollments_user_course_unique", table_name="enrollments")
+    op.drop_index(
+        "ix_enrollments_user_course_unique", table_name="enrollments"
+    )
     op.drop_index(op.f("ix_enrollments_status"), table_name="enrollments")
     op.drop_index(op.f("ix_enrollments_course_id"), table_name="enrollments")
     op.drop_index(op.f("ix_enrollments_user_id"), table_name="enrollments")

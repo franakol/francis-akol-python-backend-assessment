@@ -25,10 +25,14 @@ class PaymentRepository:
 
     async def get_payment_by_id(self, payment_id: int) -> Optional[Payment]:
         """Get payment by ID."""
-        result = await self.db.execute(select(Payment).where(Payment.id == payment_id))
+        result = await self.db.execute(
+            select(Payment).where(Payment.id == payment_id)
+        )
         return result.scalar_one_or_none()
 
-    async def get_payment_by_intent_id(self, intent_id: str) -> Optional[Payment]:
+    async def get_payment_by_intent_id(
+        self, intent_id: str
+    ) -> Optional[Payment]:
         """Get payment by payment intent ID."""
         result = await self.db.execute(
             select(Payment).where(Payment.payment_intent_id == intent_id)
@@ -66,7 +70,9 @@ class PaymentRepository:
         if status:
             query = query.where(Payment.status == status)
 
-        query = query.order_by(Payment.created_at.desc()).offset(skip).limit(limit)
+        query = (
+            query.order_by(Payment.created_at.desc()).offset(skip).limit(limit)
+        )
 
         result = await self.db.execute(query)
         return list(result.scalars().all())
@@ -76,7 +82,9 @@ class PaymentRepository:
     ) -> int:
         """Count user payments."""
         query = (
-            select(func.count()).select_from(Payment).where(Payment.user_id == user_id)
+            select(func.count())
+            .select_from(Payment)
+            .where(Payment.user_id == user_id)
         )
 
         if status:
@@ -98,7 +106,9 @@ class PaymentRepository:
         if status:
             query = query.where(Payment.status == status)
 
-        query = query.order_by(Payment.created_at.desc()).offset(skip).limit(limit)
+        query = (
+            query.order_by(Payment.created_at.desc()).offset(skip).limit(limit)
+        )
 
         result = await self.db.execute(query)
         return list(result.scalars().all())
@@ -161,7 +171,9 @@ class PaymentRepository:
             func.count()
             .filter(Payment.status == PaymentStatus.PENDING)
             .label("pending"),
-            func.count().filter(Payment.status == PaymentStatus.FAILED).label("failed"),
+            func.count()
+            .filter(Payment.status == PaymentStatus.FAILED)
+            .label("failed"),
             func.count()
             .filter(Payment.status == PaymentStatus.REFUNDED)
             .label("refunded"),

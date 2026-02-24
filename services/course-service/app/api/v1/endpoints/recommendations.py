@@ -18,9 +18,14 @@ class RecommendationRequest(BaseModel):
     """Request body for getting recommendations."""
 
     prompt: str = Field(
-        ..., min_length=3, max_length=500, description="Describe what you want to learn"
+        ...,
+        min_length=3,
+        max_length=500,
+        description="Describe what you want to learn",
     )
-    interests: Optional[List[str]] = Field(None, description="List of your interests")
+    interests: Optional[List[str]] = Field(
+        None, description="List of your interests"
+    )
     max_results: int = Field(
         5, ge=1, le=20, description="Maximum number of recommendations"
     )
@@ -87,7 +92,10 @@ async def get_recommendations(request: RecommendationRequest):
 @router.get("/suggest", response_model=RecommendationResponse)
 async def suggest_courses(
     q: str = Query(
-        ..., min_length=3, max_length=500, description="What do you want to learn?"
+        ...,
+        min_length=3,
+        max_length=500,
+        description="What do you want to learn?",
     ),
     limit: int = Query(5, ge=1, le=20, description="Max recommendations"),
 ):

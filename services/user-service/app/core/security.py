@@ -25,7 +25,9 @@ def hash_password(password: str) -> str:
     we explicitly truncate here to avoid issues with different bcrypt versions.
     """
     # Truncate to 72 bytes to prevent bcrypt ValueError
-    password_bytes = password.encode("utf-8")[:72].decode("utf-8", errors="ignore")
+    password_bytes = password.encode("utf-8")[:72].decode(
+        "utf-8", errors="ignore"
+    )
     return pwd_context.hash(password_bytes)
 
 
@@ -63,7 +65,9 @@ def create_access_token(
             minutes=settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES
         )
 
-    to_encode.update({"exp": expire, "iat": datetime.utcnow(), "type": "access"})
+    to_encode.update(
+        {"exp": expire, "iat": datetime.utcnow(), "type": "access"}
+    )
 
     encoded_jwt = jwt.encode(
         to_encode, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM
@@ -82,9 +86,13 @@ def create_refresh_token(data: Dict[str, Any]) -> str:
         Encoded JWT refresh token
     """
     to_encode = data.copy()
-    expire = datetime.utcnow() + timedelta(days=settings.JWT_REFRESH_TOKEN_EXPIRE_DAYS)
+    expire = datetime.utcnow() + timedelta(
+        days=settings.JWT_REFRESH_TOKEN_EXPIRE_DAYS
+    )
 
-    to_encode.update({"exp": expire, "iat": datetime.utcnow(), "type": "refresh"})
+    to_encode.update(
+        {"exp": expire, "iat": datetime.utcnow(), "type": "refresh"}
+    )
 
     encoded_jwt = jwt.encode(
         to_encode, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM

@@ -18,7 +18,9 @@ router = APIRouter()
 
 
 @router.post(
-    "/signup", response_model=LoginResponse, status_code=status.HTTP_201_CREATED
+    "/signup",
+    response_model=LoginResponse,
+    status_code=status.HTTP_201_CREATED,
 )
 async def signup(
     signup_data: UserSignupRequest,

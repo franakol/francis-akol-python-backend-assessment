@@ -30,7 +30,10 @@ def process_enrollment(enrollment_id: int) -> dict:
                 return {"status": "error", "message": "Enrollment not found"}
 
             if enrollment.status != EnrollmentStatus.PENDING:
-                return {"status": "error", "message": "Enrollment already processed"}
+                return {
+                    "status": "error",
+                    "message": "Enrollment already processed",
+                }
 
             try:
                 # Check course availability and quota
@@ -44,7 +47,10 @@ def process_enrollment(enrollment_id: int) -> dict:
                     if course_response.status_code != 200:
                         enrollment.status = EnrollmentStatus.CANCELLED
                         await repository.update_enrollment(enrollment)
-                        return {"status": "error", "message": "Course not found"}
+                        return {
+                            "status": "error",
+                            "message": "Course not found",
+                        }
 
                     course = course_response.json()
 
@@ -52,11 +58,17 @@ def process_enrollment(enrollment_id: int) -> dict:
                     if not course.get("is_published"):
                         enrollment.status = EnrollmentStatus.CANCELLED
                         await repository.update_enrollment(enrollment)
-                        return {"status": "error", "message": "Course not published"}
+                        return {
+                            "status": "error",
+                            "message": "Course not published",
+                        }
 
                     # Check max students quota
                     max_students = course.get("max_students")
-                    if max_students and course.get("enrolled_count", 0) >= max_students:
+                    if (
+                        max_students
+                        and course.get("enrolled_count", 0) >= max_students
+                    ):
                         enrollment.status = EnrollmentStatus.CANCELLED
                         await repository.update_enrollment(enrollment)
                         return {"status": "error", "message": "Course is full"}

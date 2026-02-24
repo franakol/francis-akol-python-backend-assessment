@@ -42,7 +42,9 @@ class TestCategoryEndpoints:
         self, client: AsyncClient, sample_category_data: dict
     ):
         """Test creating a new category."""
-        response = await client.post("/api/v1/categories/", json=sample_category_data)
+        response = await client.post(
+            "/api/v1/categories/", json=sample_category_data
+        )
         # May require auth - check for appropriate response
         assert response.status_code in [201, 401, 403]
 
@@ -95,7 +97,9 @@ class TestCourseEndpoints:
         self, client: AsyncClient, sample_course_data: dict
     ):
         """Test creating a course without authentication."""
-        response = await client.post("/api/v1/courses/", json=sample_course_data)
+        response = await client.post(
+            "/api/v1/courses/", json=sample_course_data
+        )
         # Should require authentication
         assert response.status_code in [401, 403]
 

@@ -29,8 +29,12 @@ def upgrade() -> None:
             sa.Enum("admin", "instructor", "student", name="userrole"),
             nullable=False,
         ),
-        sa.Column("is_active", sa.Boolean(), nullable=False, server_default="true"),
-        sa.Column("is_verified", sa.Boolean(), nullable=False, server_default="false"),
+        sa.Column(
+            "is_active", sa.Boolean(), nullable=False, server_default="true"
+        ),
+        sa.Column(
+            "is_verified", sa.Boolean(), nullable=False, server_default="false"
+        ),
         sa.Column(
             "created_at",
             sa.DateTime(timezone=True),
@@ -49,7 +53,9 @@ def upgrade() -> None:
     )
     op.create_index(op.f("ix_users_id"), "users", ["id"], unique=False)
     op.create_index(op.f("ix_users_email"), "users", ["email"], unique=True)
-    op.create_index(op.f("ix_users_username"), "users", ["username"], unique=True)
+    op.create_index(
+        op.f("ix_users_username"), "users", ["username"], unique=True
+    )
     op.create_index(op.f("ix_users_role"), "users", ["role"], unique=False)
 
     # Create profiles table
@@ -78,7 +84,9 @@ def upgrade() -> None:
         sa.UniqueConstraint("user_id"),
     )
     op.create_index(op.f("ix_profiles_id"), "profiles", ["id"], unique=False)
-    op.create_index(op.f("ix_profiles_user_id"), "profiles", ["user_id"], unique=True)
+    op.create_index(
+        op.f("ix_profiles_user_id"), "profiles", ["user_id"], unique=True
+    )
 
     # Create trigger to auto-update updated_at timestamp for users
     op.execute(
@@ -110,7 +118,9 @@ def upgrade() -> None:
 
 def downgrade() -> None:
     # Drop triggers
-    op.execute("DROP TRIGGER IF EXISTS update_profiles_updated_at ON profiles;")
+    op.execute(
+        "DROP TRIGGER IF EXISTS update_profiles_updated_at ON profiles;"
+    )
     op.execute("DROP TRIGGER IF EXISTS update_users_updated_at ON users;")
     op.execute("DROP FUNCTION IF EXISTS update_updated_at_column();")
 

@@ -3,8 +3,7 @@
 import math
 from typing import Optional
 
-from app.core.security import hash_password
-from app.models.user import User, UserRole
+from app.models.user import UserRole
 from app.repositories.user_repository import UserRepository
 from app.schemas.user import (
     PaginatedUserResponse,
@@ -111,7 +110,10 @@ class UserService:
         return UserResponse.model_validate(user)
 
     async def get_users(
-        self, page: int = 1, page_size: int = 10, role: Optional[UserRole] = None
+        self,
+        page: int = 1,
+        page_size: int = 10,
+        role: Optional[UserRole] = None,
     ) -> PaginatedUserResponse:
         """Get paginated list of users."""
         if page < 1:

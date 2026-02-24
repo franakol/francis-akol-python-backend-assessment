@@ -154,7 +154,8 @@ def require_role(allowed_roles: list):
     ):
         # Convert UserRole enum to string for comparison
         allowed_role_values = [
-            role.value if hasattr(role, "value") else role for role in allowed_roles
+            role.value if hasattr(role, "value") else role
+            for role in allowed_roles
         ]
 
         if current_user.role.value not in allowed_role_values:

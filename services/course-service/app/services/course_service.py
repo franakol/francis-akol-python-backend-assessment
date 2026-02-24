@@ -1,10 +1,9 @@
 """Course service with Redis caching."""
 
 import math
-from typing import List, Optional
+from typing import Optional
 
 from app.core.cache import cache
-from app.models.course import Course
 from app.repositories.course_repository import CourseRepository
 from app.schemas.course import (
     CourseCreate,
@@ -136,7 +135,9 @@ class CourseService:
         total_pages = math.ceil(total / page_size)
 
         result = PaginatedCourseResponse(
-            items=[CourseListResponse.model_validate(course) for course in courses],
+            items=[
+                CourseListResponse.model_validate(course) for course in courses
+            ],
             total=total,
             page=page,
             page_size=page_size,

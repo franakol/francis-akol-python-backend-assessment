@@ -1,9 +1,9 @@
 """Configuration settings for User Service."""
 
 import json
-from typing import Any, List, Union
+from typing import Any, List
 
-from pydantic import field_validator, model_validator
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -59,7 +59,9 @@ class Settings(BaseSettings):
                 except json.JSONDecodeError:
                     pass
             # Otherwise comma-separated
-            return [origin.strip() for origin in v.split(",") if origin.strip()]
+            return [
+                origin.strip() for origin in v.split(",") if origin.strip()
+            ]
         return ["http://localhost:3000", "http://localhost:8080"]
 
     model_config = SettingsConfigDict(

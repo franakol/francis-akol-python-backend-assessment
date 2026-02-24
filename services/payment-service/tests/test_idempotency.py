@@ -98,7 +98,9 @@ class TestPaymentRepositoryIdempotency:
         created_payment = await repo.create_payment(payment_data)
 
         # Find by idempotency key
-        found_payment = await repo.get_payment_by_idempotency_key("repo-test-key-123")
+        found_payment = await repo.get_payment_by_idempotency_key(
+            "repo-test-key-123"
+        )
 
         assert found_payment is not None
         assert found_payment.id == created_payment.id
@@ -131,7 +133,9 @@ class TestPaymentServiceIdempotency:
         existing_payment.status = PaymentStatus.PENDING
 
         # First call to get_payment_by_idempotency_key returns existing payment
-        mock_repo.get_payment_by_idempotency_key.return_value = existing_payment
+        mock_repo.get_payment_by_idempotency_key.return_value = (
+            existing_payment
+        )
 
         service = PaymentService(mock_repo)
 
@@ -147,7 +151,9 @@ class TestPaymentServiceIdempotency:
         # Should return existing payment info
         assert result.payment_id == 42
         assert result.payment_intent_id == "pi_existing_123"
-        assert result.client_secret is None  # Not available for existing payments
+        assert (
+            result.client_secret is None
+        )  # Not available for existing payments
 
         # Should NOT call other repository methods or payment gateway
         mock_repo.get_user_payment_for_course.assert_not_called()
@@ -200,7 +206,9 @@ class TestPaymentServiceIdempotency:
                 "client_secret": "cs_secret_abc",
             }
 
-            result = await service.create_payment_intent(payment_data, user_id=1)
+            result = await service.create_payment_intent(
+                payment_data, user_id=1
+            )
 
             assert result.payment_id == 100
 
@@ -249,7 +257,9 @@ class TestPaymentServiceIdempotency:
                 "client_secret": "cs_secret_xyz",
             }
 
-            result = await service.create_payment_intent(payment_data, user_id=1)
+            result = await service.create_payment_intent(
+                payment_data, user_id=1
+            )
 
             # Should NOT check idempotency key (because it's None)
             mock_repo.get_payment_by_idempotency_key.assert_not_called()

@@ -36,7 +36,9 @@ async def db_session() -> AsyncGenerator[AsyncSession, None]:
         await conn.run_sync(Base.metadata.create_all)
 
     # Create session factory
-    async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+    async_session = sessionmaker(
+        engine, class_=AsyncSession, expire_on_commit=False
+    )
 
     async with async_session() as session:
         yield session
@@ -53,7 +55,9 @@ async def db_session() -> AsyncGenerator[AsyncSession, None]:
 async def client() -> AsyncGenerator[AsyncClient, None]:
     """Create an async HTTP client for testing."""
     transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://test") as client:
+    async with AsyncClient(
+        transport=transport, base_url="http://test"
+    ) as client:
         yield client
 
 

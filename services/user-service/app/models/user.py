@@ -1,7 +1,6 @@
 """User and Profile models."""
 
 import enum
-from datetime import datetime
 from typing import Optional
 
 from app.db.base import Base, TimestampMixin
@@ -36,12 +35,19 @@ class User(Base, TimestampMixin):
         nullable=False,
         index=True,
     )
-    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
-    is_verified: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    is_active: Mapped[bool] = mapped_column(
+        Boolean, default=True, nullable=False
+    )
+    is_verified: Mapped[bool] = mapped_column(
+        Boolean, default=False, nullable=False
+    )
 
     # Relationship
     profile: Mapped[Optional["Profile"]] = relationship(
-        "Profile", back_populates="user", uselist=False, cascade="all, delete-orphan"
+        "Profile",
+        back_populates="user",
+        uselist=False,
+        cascade="all, delete-orphan",
     )
 
     def __repr__(self) -> str:
@@ -60,13 +66,22 @@ class Profile(Base, TimestampMixin):
         nullable=False,
         index=True,
     )
-    first_name: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
-    last_name: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    first_name: Mapped[Optional[str]] = mapped_column(
+        String(100), nullable=True
+    )
+    last_name: Mapped[Optional[str]] = mapped_column(
+        String(100), nullable=True
+    )
     bio: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    avatar_url: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
+    avatar_url: Mapped[Optional[str]] = mapped_column(
+        String(500), nullable=True
+    )
 
     # Relationship
     user: Mapped["User"] = relationship("User", back_populates="profile")
 
     def __repr__(self) -> str:
-        return f"<Profile(id={self.id}, user_id={self.user_id}, first_name={self.first_name}, last_name={self.last_name})>"
+        return (
+            f"<Profile(id={self.id}, user_id={self.user_id}, "
+            f"first_name={self.first_name}, last_name={self.last_name})>"
+        )

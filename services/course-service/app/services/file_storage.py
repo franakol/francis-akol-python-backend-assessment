@@ -3,7 +3,7 @@
 import hashlib
 import os
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 from typing import Optional, Tuple
 
@@ -81,7 +81,9 @@ class FileStorageService:
         unique_id = uuid.uuid4().hex[:8]
         timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
         safe_name = "".join(
-            c for c in original_filename.rsplit(".", 1)[0] if c.isalnum() or c in "-_"
+            c
+            for c in original_filename.rsplit(".", 1)[0]
+            if c.isalnum() or c in "-_"
         )[:50]
         return f"{timestamp}_{unique_id}_{safe_name}.{extension}"
 
@@ -181,7 +183,9 @@ class FileStorageService:
 
         return file_path, content_type
 
-    async def delete_file(self, course_id: int, category: str, filename: str) -> bool:
+    async def delete_file(
+        self, course_id: int, category: str, filename: str
+    ) -> bool:
         """Delete a file."""
         file_path = self.storage_path / str(course_id) / category / filename
 
@@ -191,7 +195,9 @@ class FileStorageService:
         os.remove(file_path)
         return True
 
-    async def list_files(self, course_id: int, category: Optional[str] = None) -> list:
+    async def list_files(
+        self, course_id: int, category: Optional[str] = None
+    ) -> list:
         """List all files for a course."""
         course_dir = self.storage_path / str(course_id)
 

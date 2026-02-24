@@ -61,7 +61,9 @@ class TestEnrollmentEndpoints:
         assert response.status_code in [401, 403, 404]
 
     @pytest.mark.asyncio
-    async def test_get_enrollment_stats_unauthorized(self, client: AsyncClient):
+    async def test_get_enrollment_stats_unauthorized(
+        self, client: AsyncClient
+    ):
         """Test getting enrollment stats without authentication."""
         response = await client.get("/api/v1/enrollments/stats")
         assert response.status_code in [401, 403]
@@ -71,14 +73,18 @@ class TestEnrollmentValidation:
     """Test input validation for enrollment endpoints."""
 
     @pytest.mark.asyncio
-    async def test_create_enrollment_missing_course_id(self, client: AsyncClient):
+    async def test_create_enrollment_missing_course_id(
+        self, client: AsyncClient
+    ):
         """Test creating enrollment without course_id."""
         response = await client.post("/api/v1/enrollments/", json={})
         # Should return validation error or auth error
         assert response.status_code in [401, 422]
 
     @pytest.mark.asyncio
-    async def test_create_enrollment_invalid_course_id(self, client: AsyncClient):
+    async def test_create_enrollment_invalid_course_id(
+        self, client: AsyncClient
+    ):
         """Test creating enrollment with invalid course_id."""
         response = await client.post(
             "/api/v1/enrollments/", json={"course_id": "invalid"}
@@ -110,8 +116,12 @@ class TestCourseEnrollments:
     """Test course-specific enrollment endpoints."""
 
     @pytest.mark.asyncio
-    async def test_get_course_enrollments_unauthorized(self, client: AsyncClient):
+    async def test_get_course_enrollments_unauthorized(
+        self, client: AsyncClient
+    ):
         """Test getting enrollments for a course without authentication."""
-        response = await client.get("/api/v1/enrollments/courses/1/enrollments")
+        response = await client.get(
+            "/api/v1/enrollments/courses/1/enrollments"
+        )
         # This may be instructor-only endpoint
         assert response.status_code in [401, 403, 404]

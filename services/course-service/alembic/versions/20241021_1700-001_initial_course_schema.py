@@ -8,7 +8,6 @@ Create Date: 2024-10-21 17:00:00.000000
 
 import sqlalchemy as sa
 from alembic import op
-from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
 revision = "001"
@@ -41,9 +40,15 @@ def upgrade() -> None:
         sa.UniqueConstraint("name"),
         sa.UniqueConstraint("slug"),
     )
-    op.create_index(op.f("ix_categories_id"), "categories", ["id"], unique=False)
-    op.create_index(op.f("ix_categories_name"), "categories", ["name"], unique=True)
-    op.create_index(op.f("ix_categories_slug"), "categories", ["slug"], unique=True)
+    op.create_index(
+        op.f("ix_categories_id"), "categories", ["id"], unique=False
+    )
+    op.create_index(
+        op.f("ix_categories_name"), "categories", ["name"], unique=True
+    )
+    op.create_index(
+        op.f("ix_categories_slug"), "categories", ["slug"], unique=True
+    )
 
     # Create courses table
     op.create_table(
@@ -60,8 +65,15 @@ def upgrade() -> None:
             server_default="0.00",
         ),
         sa.Column("max_students", sa.Integer(), nullable=True),
-        sa.Column("enrolled_count", sa.Integer(), nullable=False, server_default="0"),
-        sa.Column("is_published", sa.Boolean(), nullable=False, server_default="false"),
+        sa.Column(
+            "enrolled_count", sa.Integer(), nullable=False, server_default="0"
+        ),
+        sa.Column(
+            "is_published",
+            sa.Boolean(),
+            nullable=False,
+            server_default="false",
+        ),
         sa.Column("thumbnail_url", sa.String(length=500), nullable=True),
         sa.Column(
             "created_at",
@@ -81,12 +93,20 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index(op.f("ix_courses_id"), "courses", ["id"], unique=False)
-    op.create_index(op.f("ix_courses_title"), "courses", ["title"], unique=False)
     op.create_index(
-        op.f("ix_courses_instructor_id"), "courses", ["instructor_id"], unique=False
+        op.f("ix_courses_title"), "courses", ["title"], unique=False
     )
     op.create_index(
-        op.f("ix_courses_category_id"), "courses", ["category_id"], unique=False
+        op.f("ix_courses_instructor_id"),
+        "courses",
+        ["instructor_id"],
+        unique=False,
+    )
+    op.create_index(
+        op.f("ix_courses_category_id"),
+        "courses",
+        ["category_id"],
+        unique=False,
     )
 
     # Create course_contents table
@@ -100,7 +120,9 @@ def upgrade() -> None:
         sa.Column("content_text", sa.Text(), nullable=True),
         sa.Column("duration_minutes", sa.Integer(), nullable=True),
         sa.Column("order", sa.Integer(), nullable=False, server_default="0"),
-        sa.Column("is_preview", sa.Boolean(), nullable=False, server_default="false"),
+        sa.Column(
+            "is_preview", sa.Boolean(), nullable=False, server_default="false"
+        ),
         sa.Column(
             "created_at",
             sa.DateTime(timezone=True),
@@ -113,7 +135,9 @@ def upgrade() -> None:
             server_default=sa.text("now()"),
             nullable=False,
         ),
-        sa.ForeignKeyConstraint(["course_id"], ["courses.id"], ondelete="CASCADE"),
+        sa.ForeignKeyConstraint(
+            ["course_id"], ["courses.id"], ondelete="CASCADE"
+        ),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index(
@@ -129,7 +153,7 @@ def upgrade() -> None:
     # Create full-text search index on course title and description
     op.execute(
         """
-        CREATE INDEX idx_courses_fulltext ON courses 
+        CREATE INDEX idx_courses_fulltext ON courses
         USING gin(to_tsvector('english', title || ' ' || description))
     """
     )
@@ -175,11 +199,15 @@ def downgrade() -> None:
         "DROP TRIGGER IF EXISTS update_course_contents_updated_at ON course_contents;"
     )
     op.execute("DROP TRIGGER IF EXISTS update_courses_updated_at ON courses;")
-    op.execute("DROP TRIGGER IF EXISTS update_categories_updated_at ON categories;")
+    op.execute(
+        "DROP TRIGGER IF EXISTS update_categories_updated_at ON categories;"
+    )
     op.execute("DROP FUNCTION IF EXISTS update_updated_at_column();")
 
     # Drop tables
-    op.drop_index(op.f("ix_course_contents_course_id"), table_name="course_contents")
+    op.drop_index(
+        op.f("ix_course_contents_course_id"), table_name="course_contents"
+    )
     op.drop_index(op.f("ix_course_contents_id"), table_name="course_contents")
     op.drop_table("course_contents")
 

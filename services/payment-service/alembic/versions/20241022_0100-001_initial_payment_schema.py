@@ -20,12 +20,18 @@ depends_on = None
 def upgrade() -> None:
     # Create paymentstatus enum (if not exists)
     op.execute(
-        "DO $$ BEGIN CREATE TYPE paymentstatus AS ENUM ('pending', 'completed', 'failed', 'refunded'); EXCEPTION WHEN duplicate_object THEN null; END $$;"
+        "DO $$ BEGIN "
+        "CREATE TYPE paymentstatus AS ENUM "
+        "('pending', 'completed', 'failed', 'refunded'); "
+        "EXCEPTION WHEN duplicate_object THEN null; END $$;"
     )
 
     # Create paymentmethod enum (if not exists)
     op.execute(
-        "DO $$ BEGIN CREATE TYPE paymentmethod AS ENUM ('credit_card', 'debit_card', 'paypal', 'stripe', 'bank_transfer'); EXCEPTION WHEN duplicate_object THEN null; END $$;"
+        "DO $$ BEGIN "
+        "CREATE TYPE paymentmethod AS ENUM "
+        "('credit_card', 'debit_card', 'paypal', 'stripe', 'bank_transfer'); "
+        "EXCEPTION WHEN duplicate_object THEN null; END $$;"
     )
 
     # Create payments table
@@ -37,7 +43,10 @@ def upgrade() -> None:
         sa.Column("enrollment_id", sa.Integer(), nullable=True),
         sa.Column("amount", sa.Numeric(precision=10, scale=2), nullable=False),
         sa.Column(
-            "currency", sa.String(length=3), nullable=False, server_default="USD"
+            "currency",
+            sa.String(length=3),
+            nullable=False,
+            server_default="USD",
         ),
         sa.Column(
             "status",
@@ -88,16 +97,26 @@ def upgrade() -> None:
 
     # Create indexes
     op.create_index(op.f("ix_payments_id"), "payments", ["id"], unique=False)
-    op.create_index(op.f("ix_payments_user_id"), "payments", ["user_id"], unique=False)
+    op.create_index(
+        op.f("ix_payments_user_id"), "payments", ["user_id"], unique=False
+    )
     op.create_index(
         op.f("ix_payments_course_id"), "payments", ["course_id"], unique=False
     )
     op.create_index(
-        op.f("ix_payments_enrollment_id"), "payments", ["enrollment_id"], unique=False
+        op.f("ix_payments_enrollment_id"),
+        "payments",
+        ["enrollment_id"],
+        unique=False,
     )
-    op.create_index(op.f("ix_payments_status"), "payments", ["status"], unique=False)
     op.create_index(
-        op.f("ix_payments_transaction_id"), "payments", ["transaction_id"], unique=True
+        op.f("ix_payments_status"), "payments", ["status"], unique=False
+    )
+    op.create_index(
+        op.f("ix_payments_transaction_id"),
+        "payments",
+        ["transaction_id"],
+        unique=True,
     )
     op.create_index(
         op.f("ix_payments_payment_intent_id"),
@@ -108,7 +127,10 @@ def upgrade() -> None:
 
     # Create composite index for user_id + course_id (common query pattern)
     op.create_index(
-        "ix_payments_user_course", "payments", ["user_id", "course_id"], unique=False
+        "ix_payments_user_course",
+        "payments",
+        ["user_id", "course_id"],
+        unique=False,
     )
 
     # Create trigger for auto-update timestamps
@@ -134,7 +156,9 @@ def upgrade() -> None:
 
 def downgrade() -> None:
     # Drop triggers
-    op.execute("DROP TRIGGER IF EXISTS update_payments_updated_at ON payments;")
+    op.execute(
+        "DROP TRIGGER IF EXISTS update_payments_updated_at ON payments;"
+    )
     op.execute("DROP FUNCTION IF EXISTS update_updated_at_column();")
 
     # Drop indexes

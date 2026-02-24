@@ -16,7 +16,9 @@ class CourseRepository:
         self.db = db
 
     # Course operations
-    async def create_course(self, course_data: dict, instructor_id: int) -> Course:
+    async def create_course(
+        self, course_data: dict, instructor_id: int
+    ) -> Course:
         """Create a new course."""
         course = Course(**course_data, instructor_id=instructor_id)
         self.db.add(course)
@@ -171,7 +173,9 @@ class CourseRepository:
         )
         return result.scalar_one_or_none()
 
-    async def update_course_content(self, content: CourseContent) -> CourseContent:
+    async def update_course_content(
+        self, content: CourseContent
+    ) -> CourseContent:
         """Update course content."""
         await self.db.commit()
         await self.db.refresh(content)
@@ -200,12 +204,16 @@ class CourseRepository:
 
     async def get_category_by_slug(self, slug: str) -> Optional[Category]:
         """Get category by slug."""
-        result = await self.db.execute(select(Category).where(Category.slug == slug))
+        result = await self.db.execute(
+            select(Category).where(Category.slug == slug)
+        )
         return result.scalar_one_or_none()
 
     async def get_categories(self) -> List[Category]:
         """Get all categories."""
-        result = await self.db.execute(select(Category).order_by(Category.name))
+        result = await self.db.execute(
+            select(Category).order_by(Category.name)
+        )
         return list(result.scalars().all())
 
     async def update_category(self, category: Category) -> Category:

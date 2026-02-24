@@ -61,7 +61,9 @@ class Payment(Base, TimestampMixin):
         Integer, nullable=True, index=True
     )
     amount: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
-    currency: Mapped[str] = mapped_column(String(3), nullable=False, default="USD")
+    currency: Mapped[str] = mapped_column(
+        String(3), nullable=False, default="USD"
+    )
     status: Mapped[PaymentStatus] = mapped_column(
         Enum(PaymentStatus, name="paymentstatus", create_type=False),
         default=PaymentStatus.PENDING,
@@ -69,7 +71,8 @@ class Payment(Base, TimestampMixin):
         index=True,
     )
     payment_method: Mapped[PaymentMethod] = mapped_column(
-        Enum(PaymentMethod, name="paymentmethod", create_type=False), nullable=False
+        Enum(PaymentMethod, name="paymentmethod", create_type=False),
+        nullable=False,
     )
     transaction_id: Mapped[Optional[str]] = mapped_column(
         String(255), unique=True, nullable=True, index=True
@@ -90,4 +93,8 @@ class Payment(Base, TimestampMixin):
     )  # JSON string
 
     def __repr__(self) -> str:
-        return f"<Payment(id={self.id}, user_id={self.user_id}, course_id={self.course_id}, amount={self.amount}, status={self.status})>"
+        return (
+            f"<Payment(id={self.id}, user_id={self.user_id}, "
+            f"course_id={self.course_id}, amount={self.amount}, "
+            f"status={self.status})>"
+        )

@@ -54,7 +54,11 @@ async def health_check():
     """Health check endpoint for container orchestration."""
     return JSONResponse(
         status_code=200,
-        content={"status": "healthy", "service": "payment-service", "version": "1.0.0"},
+        content={
+            "status": "healthy",
+            "service": "payment-service",
+            "version": "1.0.0",
+        },
     )
 
 
@@ -90,4 +94,6 @@ app.include_router(api_router, prefix="/api/v1")
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run("app.main:app", host="0.0.0.0", port=8004, reload=settings.DEBUG)
+    uvicorn.run(
+        "app.main:app", host="0.0.0.0", port=8004, reload=settings.DEBUG
+    )

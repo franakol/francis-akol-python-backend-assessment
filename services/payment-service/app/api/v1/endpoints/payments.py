@@ -22,7 +22,9 @@ router = APIRouter()
 
 
 @router.post(
-    "/", response_model=PaymentIntentResponse, status_code=status.HTTP_201_CREATED
+    "/",
+    response_model=PaymentIntentResponse,
+    status_code=status.HTTP_201_CREATED,
 )
 async def create_payment_intent(
     payment_data: PaymentIntentCreate,

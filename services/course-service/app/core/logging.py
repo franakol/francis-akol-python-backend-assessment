@@ -182,7 +182,12 @@ def setup_logging(service_name: str = "course-service"):
 
     # Intercept standard logging
     logging.basicConfig(handlers=[InterceptHandler()], level=0)
-    for logger_name in ("uvicorn", "uvicorn.access", "uvicorn.error", "fastapi"):
+    for logger_name in (
+        "uvicorn",
+        "uvicorn.access",
+        "uvicorn.error",
+        "fastapi",
+    ):
         logging_logger = logging.getLogger(logger_name)
         logging_logger.handlers = [InterceptHandler()]
 
@@ -274,11 +279,13 @@ def log_service_call(
     if error:
         log_data["error"] = error
         logger.error(
-            f"Service call to {service}: {method} {path} failed - {error}", **log_data
+            f"Service call to {service}: {method} {path} failed - {error}",
+            **log_data,
         )
     else:
         logger.info(
-            f"Service call to {service}: {method} {path} -> {status_code}", **log_data
+            f"Service call to {service}: {method} {path} -> {status_code}",
+            **log_data,
         )
 
 

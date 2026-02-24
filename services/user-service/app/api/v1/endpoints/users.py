@@ -71,7 +71,9 @@ async def update_current_user_profile(
     """
     user_repository = UserRepository(db)
     user_service = UserService(user_repository)
-    return await user_service.update_current_user_profile(current_user.id, profile_data)
+    return await user_service.update_current_user_profile(
+        current_user.id, profile_data
+    )
 
 
 @router.get("/", response_model=PaginatedUserResponse)
@@ -93,7 +95,9 @@ async def get_users(
     """
     user_repository = UserRepository(db)
     user_service = UserService(user_repository)
-    return await user_service.get_users(page=page, page_size=page_size, role=role)
+    return await user_service.get_users(
+        page=page, page_size=page_size, role=role
+    )
 
 
 @router.get("/{user_id}", response_model=UserResponse)
@@ -115,7 +119,9 @@ async def get_user_by_id(
 
 
 @router.delete(
-    "/{user_id}", response_model=MessageResponse, status_code=status.HTTP_200_OK
+    "/{user_id}",
+    response_model=MessageResponse,
+    status_code=status.HTTP_200_OK,
 )
 async def delete_user(
     user_id: int,

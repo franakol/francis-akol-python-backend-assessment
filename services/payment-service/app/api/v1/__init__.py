@@ -6,4 +6,6 @@ from fastapi import APIRouter
 api_router = APIRouter()
 
 # Include payment endpoints
-api_router.include_router(payments.router, prefix="/payments", tags=["Payments"])
+api_router.include_router(
+    payments.router, prefix="/payments", tags=["Payments"]
+)

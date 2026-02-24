@@ -20,7 +20,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 router = APIRouter()
 
 
-@router.post("/", response_model=CourseResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/", response_model=CourseResponse, status_code=status.HTTP_201_CREATED
+)
 async def create_course(
     course_data: CourseCreate,
     x_user_id: int = Header(..., description="User ID from auth service"),
@@ -109,7 +111,9 @@ async def update_course(
     """
     course_repository = CourseRepository(db)
     course_service = CourseService(course_repository)
-    return await course_service.update_course(course_id, course_data, x_user_id)
+    return await course_service.update_course(
+        course_id, course_data, x_user_id
+    )
 
 
 @router.delete("/{course_id}", response_model=MessageResponse)
@@ -150,7 +154,9 @@ async def create_course_content(
     course_repository = CourseRepository(db)
 
     # Verify course exists and user is instructor
-    course = await course_repository.get_course_by_id(course_id, include_contents=False)
+    course = await course_repository.get_course_by_id(
+        course_id, include_contents=False
+    )
     if not course:
         from fastapi import HTTPException
 
@@ -185,4 +191,6 @@ async def get_course_contents(
     """
     course_repository = CourseRepository(db)
     contents = await course_repository.get_course_contents(course_id)
-    return [CourseContentResponse.model_validate(content) for content in contents]
+    return [
+        CourseContentResponse.model_validate(content) for content in contents
+    ]

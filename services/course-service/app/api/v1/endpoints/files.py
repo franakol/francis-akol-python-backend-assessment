@@ -3,7 +3,7 @@
 from typing import List, Optional
 
 from app.services.file_storage import file_storage_service
-from fastapi import APIRouter, Depends, File, HTTPException, Path, Query, UploadFile
+from fastapi import APIRouter, File, Path, Query, UploadFile
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
@@ -41,7 +41,9 @@ async def upload_file(
     file: UploadFile = File(..., description="File to upload"),
     category: str = Query("materials", description="File category"),
     # In production, add proper auth dependency
-    user_id: int = Query(1, description="User ID (temp - use auth in production)"),
+    user_id: int = Query(
+        1, description="User ID (temp - use auth in production)"
+    ),
 ):
     """
     Upload a file for a course.

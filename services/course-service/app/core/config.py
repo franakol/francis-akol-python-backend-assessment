@@ -63,7 +63,9 @@ class Settings(BaseSettings):
                     return json.loads(v)
                 except json.JSONDecodeError:
                     pass
-            return [origin.strip() for origin in v.split(",") if origin.strip()]
+            return [
+                origin.strip() for origin in v.split(",") if origin.strip()
+            ]
         return default
 
     model_config = SettingsConfigDict(

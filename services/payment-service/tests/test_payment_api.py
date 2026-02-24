@@ -49,7 +49,9 @@ class TestPaymentEndpoints:
         self, client: AsyncClient, sample_payment_data: dict
     ):
         """Test creating a payment without authentication."""
-        response = await client.post("/api/v1/payments/", json=sample_payment_data)
+        response = await client.post(
+            "/api/v1/payments/", json=sample_payment_data
+        )
         assert response.status_code in [401, 403]
 
     @pytest.mark.asyncio

@@ -1,8 +1,5 @@
 """Authentication service for user authentication and authorization."""
 
-from datetime import datetime, timedelta
-from typing import Dict, Optional
-
 from app.core.config import settings
 from app.core.security import (
     create_access_token,
@@ -31,8 +28,10 @@ class AuthService:
     async def signup(self, signup_data: UserSignupRequest) -> LoginResponse:
         """Register a new user."""
         # Check if user already exists
-        existing_user = await self.user_repository.get_user_by_email_or_username(
-            email=signup_data.email, username=signup_data.username
+        existing_user = (
+            await self.user_repository.get_user_by_email_or_username(
+                email=signup_data.email, username=signup_data.username
+            )
         )
 
         if existing_user:
@@ -67,7 +66,9 @@ class AuthService:
         # Generate tokens
         tokens = self._generate_tokens(user)
 
-        return LoginResponse(user=UserResponse.model_validate(user), tokens=tokens)
+        return LoginResponse(
+            user=UserResponse.model_validate(user), tokens=tokens
+        )
 
     async def login(self, email: str, password: str) -> LoginResponse:
         """Authenticate user and return tokens."""
@@ -97,7 +98,9 @@ class AuthService:
         # Generate tokens
         tokens = self._generate_tokens(user)
 
-        return LoginResponse(user=UserResponse.model_validate(user), tokens=tokens)
+        return LoginResponse(
+            user=UserResponse.model_validate(user), tokens=tokens
+        )
 
     async def refresh_token(self, refresh_token: str) -> TokenResponse:
         """Refresh access token using refresh token."""

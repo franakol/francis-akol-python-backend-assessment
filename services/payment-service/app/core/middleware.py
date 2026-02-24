@@ -11,12 +11,7 @@ import time
 import uuid
 from typing import Callable
 
-from app.core.logging import (
-    get_correlation_id,
-    log_request,
-    logger,
-    set_correlation_id,
-)
+from app.core.logging import log_request, logger, set_correlation_id
 from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
 
@@ -24,7 +19,9 @@ from starlette.middleware.base import BaseHTTPMiddleware
 class LoggingMiddleware(BaseHTTPMiddleware):
     """Middleware for structured request/response logging."""
 
-    async def dispatch(self, request: Request, call_next: Callable) -> Response:
+    async def dispatch(
+        self, request: Request, call_next: Callable
+    ) -> Response:
         """Process request and log details."""
         # Extract or generate correlation ID
         correlation_id = request.headers.get("X-Correlation-ID")

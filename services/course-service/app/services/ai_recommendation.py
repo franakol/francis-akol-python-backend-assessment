@@ -60,7 +60,9 @@ class AIRecommendationService:
 
         # Build the system prompt
         system_prompt = self._build_system_prompt(available_courses)
-        user_prompt = self._build_user_prompt(prompt, user_interests, max_results)
+        user_prompt = self._build_user_prompt(
+            prompt, user_interests, max_results
+        )
 
         try:
             async with httpx.AsyncClient() as client:
@@ -85,7 +87,9 @@ class AIRecommendationService:
                 if response.status_code == 200:
                     result = response.json()
                     content = result["choices"][0]["message"]["content"]
-                    return self._parse_recommendations(content, available_courses)
+                    return self._parse_recommendations(
+                        content, available_courses
+                    )
                 else:
                     # Fallback on API error
                     return self._fallback_recommendations(

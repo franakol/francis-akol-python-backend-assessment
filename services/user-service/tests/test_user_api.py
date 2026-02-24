@@ -45,7 +45,9 @@ async def test_get_current_user_unauthorized(client: AsyncClient):
     """Test getting current user without authentication fails."""
     response = await client.get("/api/v1/users/me")
 
-    assert response.status_code == 403  # HTTPBearer returns 403 for missing token
+    assert (
+        response.status_code == 403
+    )  # HTTPBearer returns 403 for missing token
 
 
 @pytest.mark.asyncio

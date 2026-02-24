@@ -14,17 +14,23 @@ class EnrollmentRepository:
         """Initialize repository with database session."""
         self.db = db
 
-    async def create_enrollment(self, user_id: int, course_id: int) -> Enrollment:
+    async def create_enrollment(
+        self, user_id: int, course_id: int
+    ) -> Enrollment:
         """Create a new enrollment."""
         enrollment = Enrollment(
-            user_id=user_id, course_id=course_id, status=EnrollmentStatus.PENDING
+            user_id=user_id,
+            course_id=course_id,
+            status=EnrollmentStatus.PENDING,
         )
         self.db.add(enrollment)
         await self.db.commit()
         await self.db.refresh(enrollment)
         return enrollment
 
-    async def get_enrollment_by_id(self, enrollment_id: int) -> Optional[Enrollment]:
+    async def get_enrollment_by_id(
+        self, enrollment_id: int
+    ) -> Optional[Enrollment]:
         """Get enrollment by ID."""
         result = await self.db.execute(
             select(Enrollment).where(Enrollment.id == enrollment_id)
@@ -37,7 +43,10 @@ class EnrollmentRepository:
         """Get user's enrollment for a specific course."""
         result = await self.db.execute(
             select(Enrollment).where(
-                and_(Enrollment.user_id == user_id, Enrollment.course_id == course_id)
+                and_(
+                    Enrollment.user_id == user_id,
+                    Enrollment.course_id == course_id,
+                )
             )
         )
         return result.scalar_one_or_none()
@@ -55,7 +64,11 @@ class EnrollmentRepository:
         if status:
             query = query.where(Enrollment.status == status)
 
-        query = query.order_by(Enrollment.enrolled_at.desc()).offset(skip).limit(limit)
+        query = (
+            query.order_by(Enrollment.enrolled_at.desc())
+            .offset(skip)
+            .limit(limit)
+        )
 
         result = await self.db.execute(query)
         return list(result.scalars().all())
@@ -89,7 +102,11 @@ class EnrollmentRepository:
         if status:
             query = query.where(Enrollment.status == status)
 
-        query = query.order_by(Enrollment.enrolled_at.desc()).offset(skip).limit(limit)
+        query = (
+            query.order_by(Enrollment.enrolled_at.desc())
+            .offset(skip)
+            .limit(limit)
+        )
 
         result = await self.db.execute(query)
         return list(result.scalars().all())
@@ -121,7 +138,9 @@ class EnrollmentRepository:
         await self.db.delete(enrollment)
         await self.db.commit()
 
-    async def get_enrollment_stats(self, user_id: Optional[int] = None) -> dict:
+    async def get_enrollment_stats(
+        self, user_id: Optional[int] = None
+    ) -> dict:
         """Get enrollment statistics."""
         query = select(
             func.count().label("total"),
